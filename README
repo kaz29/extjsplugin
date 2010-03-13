@@ -1,0 +1,8 @@
+ExtJS Plugin for CakePHP(1.3x)
+
+This project is experimental ones.
+Until this project stabilizes, there is a possibility where there is large-scale specification modification.
+
+2010/03/13  
+  ExtJS Engine Helper for CakePHP 1.3
+  Implemented methods(get,event,domReady,each,effect,request)

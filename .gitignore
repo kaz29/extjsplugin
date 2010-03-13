@@ -1,0 +1,11 @@
+*~
+.DS_Store
+Thumbs.db
+gmon.out
+.buildpath
+*.project
+*.settings
+app/tmp/logs/*.log
+app/tmp/cache/persistent/cake*
+app/tmp/cache/models/cake*
+app/tmp/cache/cake*
