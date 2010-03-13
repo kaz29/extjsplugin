@@ -6,11 +6,10 @@
  *
  * PHP versions 4 and 5
  *
- * @copyright       Copyright 2010, kaz29.
+ * @copyright       Copyright 2010, KazWatanabe.
  * @link            http://d.hatena.ne.jp/kaz_29/
  * @package         extjsplugin
  * @subpackage      extjsplugin.view.helpers
- * @license         MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Helper', 'Js');
 
