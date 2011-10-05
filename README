@@ -1,7 +1,10 @@
-ExtJS Plugin for CakePHP(1.3x)
+ExtJS Plugin for CakePHP(2.x)
 
 This project is experimental ones.
 Until this project stabilizes, there is a possibility where there is large-scale specification modification.
+
+2011/10/05  
+  Porting to CakePHP2.x.
 
 2010/03/13  
   ExtJS Engine Helper for CakePHP 1.3
