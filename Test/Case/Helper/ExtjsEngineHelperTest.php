@@ -1,5 +1,8 @@
 <?php
-App::import('Helper', array('Html', 'Js', 'extjs.ExtjsEngine'));
+App::uses('HtmlHelper', 'View/Helper');
+App::uses('JsHelper', 'View/Helper');
+App::uses('ExtjsEngineHelper', 'Extjs.View/Helper');
+App::uses('View', 'View');
 
 class ExtjsEngineHelperTestCase extends CakeTestCase {
 /**
@@ -8,7 +11,9 @@ class ExtjsEngineHelperTestCase extends CakeTestCase {
  * @return void
  */
 	function startTest() {
-		$this->Extjs =& new ExtjsEngineHelper();
+		$controller = null;
+		$this->View = $this->getMock('View', array('addScript'), array(&$controller));
+		$this->Extjs = new ExtjsEngineHelper($this->View);
 	}
 
 /**

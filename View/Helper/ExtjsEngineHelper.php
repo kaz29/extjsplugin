@@ -4,14 +4,15 @@
  *
  * Provides ExtJS specific Javascript for JsHelper.
  *
- * PHP versions 4 and 5
+ * PHP5
  *
- * @copyright       Copyright 2010, KazWatanabe.
+ * @copyright       Copyright 2010-2011, KazWatanabe.
  * @link            http://d.hatena.ne.jp/kaz_29/
  * @package         extjsplugin
  * @subpackage      extjsplugin.view.helpers
  */
-App::import('Helper', 'Js');
+App::uses('AppHelper', 'View/Helper');
+App::uses('JsBaseEngineHelper', 'View/Helper');
 
 class ExtjsEngineHelper extends JsBaseEngineHelper
 {
@@ -20,7 +21,7 @@ class ExtjsEngineHelper extends JsBaseEngineHelper
  *
  * @var array
  */
-	var $_optionMap = array(
+	protected $_optionMap = array(
 		'request' => array(
 			'error' => 'failure',
 			'data' => 'params',
@@ -32,7 +33,7 @@ class ExtjsEngineHelper extends JsBaseEngineHelper
  *
  * @var string
  */
-	var $_callbackArguments = array(
+	protected $_callbackArguments = array(
 		'request' => array(
 			'beforeSend' => 'XMLHttpRequest',
 			'error' => 'XMLHttpRequest, textStatus, errorThrown',
@@ -55,7 +56,7 @@ class ExtjsEngineHelper extends JsBaseEngineHelper
  * @param array $options Options for the event.
  * @return string completed event handler
  */
-	function event($type, $callback, $options = array())
+	public function event($type, $callback, $options = array())
 	{
 		$defaults = array('wrap' => true, 'stop' => true);
 		$options = array_merge($defaults, $options);
@@ -81,7 +82,7 @@ class ExtjsEngineHelper extends JsBaseEngineHelper
  * @param string $functionBody The code to run on domReady
  * @return string completed domReady method
  */
-	function domReady($functionBody)
+	public function domReady($functionBody)
 	{
 		return $this->event('onReady', $functionBody, array('stop' => false));
 	}
@@ -92,7 +93,7 @@ class ExtjsEngineHelper extends JsBaseEngineHelper
  * @param string $selector The selector that is targeted
  * @return object instance of $this. Allows chained methods.
  */
-	function get($selector)
+	public function get($selector)
 	{
 		if ($selector == 'window' ) {
 	    $this->selection = 'Ext.select('.$selector.')' ;
@@ -114,7 +115,7 @@ class ExtjsEngineHelper extends JsBaseEngineHelper
  * @param string $callback The function body you wish to apply during the iteration.
  * @return string completed iteration
  */
-	function each($callback) 
+	public function each($callback) 
 	{
 		return $this->selection.'.each(function (el) {' . $callback . '});';
 	}
@@ -127,7 +128,7 @@ class ExtjsEngineHelper extends JsBaseEngineHelper
  * @return string completed string with effect.
  * @see JsBaseEngineHelper::effect()
  */
-	function effect($name, $options = array()) {
+	public function effect($name, $options = array()) {
 		$speed = .5;
 		if (isset($options['speed'])) {
 			$speed = $options['speed'];
@@ -184,7 +185,7 @@ class ExtjsEngineHelper extends JsBaseEngineHelper
  * @param array $options
  * @return string The completed ajax call.
  */
-	function request($url, $options = array()) {
+	public function request($url, $options = array()) {
 		$url = $this->url($url);
 		$options = $this->_mapOptions('request', $options);
 		if (isset($options['params']) && is_array($options['params'])) {
@@ -211,4 +212,116 @@ class ExtjsEngineHelper extends JsBaseEngineHelper
 		$options = $this->_parseOptions($options, $callbacks);
 		return 'Ext.Ajax.request({' . $options .'});';
   }
+
+/**
+ * Create a draggable element.  Works on the currently selected element.
+ * Additional options may be supported by the library implementation.
+ *
+ * ### Options
+ *
+ * - `handle` - selector to the handle element.
+ * - `snapGrid` - The pixel grid that movement snaps to, an array(x, y)
+ * - `container` - The element that acts as a bounding box for the draggable element.
+ *
+ * ### Event Options
+ *
+ * - `start` - Event fired when the drag starts
+ * - `drag` - Event fired on every step of the drag
+ * - `stop` - Event fired when dragging stops (mouse release)
+ *
+ * @param array $options Options array see above.
+ * @return string Completed drag script
+ */
+	public function drag($options = array())
+	{
+	}
+
+/**
+ * Create a droppable element. Allows for draggable elements to be dropped on it.
+ * Additional options may be supported by the library implementation.
+ *
+ * ### Options
+ *
+ * - `accept` - Selector for elements this droppable will accept.
+ * - `hoverclass` - Class to add to droppable when a draggable is over.
+ *
+ * ### Event Options
+ *
+ * - `drop` - Event fired when an element is dropped into the drop zone.
+ * - `hover` - Event fired when a drag enters a drop zone.
+ * - `leave` - Event fired when a drag is removed from a drop zone without being dropped.
+ *
+ * @param array $options Array of options for the drop. See above.
+ * @return string Completed drop script
+ */
+	public function drop($options = array())
+	{
+	}
+	
+/**
+ * Create a sortable element.
+ * Additional options may be supported by the library implementation.
+ *
+ * ### Options
+ *
+ * - `containment` - Container for move action
+ * - `handle` - Selector to handle element. Only this element will start sort action.
+ * - `revert` - Whether or not to use an effect to move sortable into final position.
+ * - `opacity` - Opacity of the placeholder
+ * - `distance` - Distance a sortable must be dragged before sorting starts.
+ *
+ * ### Event Options
+ *
+ * - `start` - Event fired when sorting starts
+ * - `sort` - Event fired during sorting
+ * - `complete` - Event fired when sorting completes.
+ *
+ * @param array $options Array of options for the sortable. See above.
+ * @return string Completed sortable script.
+ */
+	public function sortable($options = array())
+	{
+	}
+/**
+ * Create a slider UI widget.  Comprised of a track and knob.
+ * Additional options may be supported by the library implementation.
+ *
+ * ### Options
+ *
+ * - `handle` - The id of the element used in sliding.
+ * - `direction` - The direction of the slider either 'vertical' or 'horizontal'
+ * - `min` - The min value for the slider.
+ * - `max` - The max value for the slider.
+ * - `step` - The number of steps or ticks the slider will have.
+ * - `value` - The initial offset of the slider.
+ *
+ * ### Events
+ *
+ * - `change` - Fired when the slider's value is updated
+ * - `complete` - Fired when the user stops sliding the handle
+ *
+ * @param array $options Array of options for the slider. See above.
+ * @return string Completed slider script
+ */
+	public function slider($options = array())
+	{
+	}
+
+/**
+ * Serialize the form attached to $selector.
+ * Pass `true` for $isForm if the current selection is a form element.
+ * Converts the form or the form element attached to the current selection into a string/json object
+ * (depending on the library implementation) for use with XHR operations.
+ *
+ * ### Options
+ *
+ * - `isForm` - is the current selection a form, or an input? (defaults to false)
+ * - `inline` - is the rendered statement going to be used inside another JS statement? (defaults to false)
+ *
+ * @param array $options options for serialization generation.
+ * @return string completed form serialization script
+ */
+	public function serializeForm($options = array())
+	{
+	}
 }
