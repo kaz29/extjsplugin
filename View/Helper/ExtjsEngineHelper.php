@@ -8,8 +8,8 @@
  *
  * @copyright       Copyright 2010-2011, KazWatanabe.
  * @link            http://d.hatena.ne.jp/kaz_29/
- * @package         extjsplugin
- * @subpackage      extjsplugin.view.helpers
+ * @package         ExtjsPlugin
+ * @subpackage      ExtjsPlugin.View.Helper
  */
 App::uses('AppHelper', 'View/Helper');
 App::uses('JsBaseEngineHelper', 'View/Helper');
