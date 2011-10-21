@@ -47,12 +47,12 @@
 
 > $ php lib/Cake/Console/cake.php bake all
 > Welcome to CakePHP v2.0.0-RC3 Console
-> ---------------------------------------------------------------
+> --
 > App : app
 > Path: [path to your app]/app/
-> ---------------------------------------------------------------
+> --
 > Bake All
-> ---------------------------------------------------------------
+> --
 > Possible Models based on your current database:
 > 1. Post
 > > Enter a number from the list above,
@@ -61,11 +61,10 @@ type in the name of another model, or 'q' to exit
 
 - 使用するテンプレートを聞かれるので、extjsを選択します。(以下の例では1を選択)
 
-> ---------------------------------------------------------------
+> --
 > You have more than one set of templates installed.
 > Please choose the template set you wish to use:
-> ---------------------------------------------------------------
-> 1. extjs
+> --> 1. extjs
 > 2. default
 > Which bake theme would you like to use? (1/2) 
 > [1] > 1
