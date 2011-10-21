@@ -43,6 +43,20 @@ class ExtjsEngineHelper extends JsBaseEngineHelper
 		)
 	);
 	
+	/**
+	 * undocumented class variable
+	 *
+	 * @var string
+	 **/
+	private $_model=null;
+	
+	/**
+	 * undocumented class variable
+	 *
+	 * @var string
+	 **/
+	private $_schema=null;
+	
 /**
  * Add an event to the script cache. Operates on the currently selected elements.
  *
@@ -323,5 +337,444 @@ class ExtjsEngineHelper extends JsBaseEngineHelper
  */
 	public function serializeForm($options = array())
 	{
+	}
+	
+	/**
+	 * Create model namespace
+	 *
+	 * @return void
+	 * @author Kaz Watanabe
+	 **/
+	public function ns($modelname)
+	{
+		$tablename = Inflector::tableize($modelname);
+		return "Ext.ns('Ext.app.{$tablename}');";
+	}
+	
+	/**
+	 * Create ExtDirect Action Definition
+	 *
+	 * @return void
+	 * @author Kaz Watanabe
+	 **/
+	public function actions($modelname, $options=array())
+	{
+		$defaults = array(
+			'actions' => true,
+		);
+		
+		$options = array_merge($defaults, $options) ;
+		$Model =& ClassRegistry::init($modelname);
+		$settings = $Model->getDirectSettings();
+		
+			// TODO プラグイン配下のモデルを使用する処理が未実装
+		$out = "'{$Model->alias}':[\n";
+		$n = 0;
+		foreach($settings['allow'] as $action) {
+			$paramnum = ($action=='view')?2:1;
+				// TODO: パラメータ数を設定で切る様修正
+			$form = (in_array($action, $settings['form']))?'true':'false';
+			$out .= "{'name':'{$action}','len':{$paramnum},'formHandler':{$form}}";
+			$out .= (++$n >= count($settings['allow']))?"\n":",\n";
+		}
+		$out .= "]";
+		
+		if ( isset($options['actions']) && $options['actions'] === true ) {
+			return "'actions':{\n$out}";
+		} else {
+			return $out;
+		}
+	}
+
+	/**
+	 * Create ExtDirect Action Definition
+	 *
+	 * @return void
+	 * @author Kaz Watanabe
+	 **/
+	public function getmodel($modelname, $options=array())
+	{
+		$defaults = array(
+			'actions' => true,
+		);
+		
+		$options = array_merge($defaults, $options) ;
+		$Model =& ClassRegistry::init($modelname);
+		
+		$out = "Ext.define('{$Model->alias}',{\nextend:'Ext.data.Model',\nfields:[\n";
+		$schema = $Model->schema();
+		$n = 0;
+		foreach($schema as $name => $prop) {
+			$out .= "'{$name}'";
+			$out .= (++$n >= count($schema))?"\n":",\n";
+		}
+		$out .= "]})";
+		
+		return $out;
+	}
+	
+	/**
+	 * undocumented function
+	 *
+	 * @return void
+	 * @author Kaz Watanabe
+	 **/
+	public function store($modelname, $options=array())
+	{
+		$exception_function =<<<EOT
+function(proxy, response, operation) {
+	if ( !response.result.success ) {
+		Ext.Msg.alert(response.result.message);
+	}
+}
+EOT;
+			// TODO: Listenerをカスタマイズする方法を実装
+		$defaults = array(
+			'model'				=> $modelname,
+			'remoteSort' 	=> true,
+			'autoLoad'		=> true,
+			'sorters'			=> array(array('property'=>'id', 'direction'=>'DESC')),
+			'proxy'				=> array(
+				'type'				=> 'direct',
+				'directFn'		=> '___DIRECT_FUNCTION___',
+				'reader'			=> array('type'=>'json', 'root'=>'datas'),
+				'listeners'		=> array(
+					'exception'	=> '___EXCEPTION_LISTENER___',
+				)
+			)
+		);
+		
+		$options = array_merge($defaults, $options);
+		
+		$tmpstr = json_encode($options);
+		$tmpstr = str_replace('"___EXCEPTION_LISTENER___"', $exception_function, $tmpstr);
+		$tmpstr = str_replace('"___DIRECT_FUNCTION___"', "{$modelname}.index", $tmpstr);
+		return "Ext.create('Ext.data.JsonStore',\n{$tmpstr}\n)";
+	}
+	
+	/**
+	 * undocumented function
+	 *
+	 * @return void
+	 * @author Kaz Watanabe
+	 **/
+	public function columns($modelname, $options=array())
+	{
+		$defaults = array(
+			'hidden' => array('id'),
+		);
+		
+		$options = array_merge_recursive($defaults, $options);
+		$Model =& ClassRegistry::init($modelname);
+		$schema = $Model->schema();
+		$n = 0;
+		$out = '[';
+		foreach($schema as $name => $prop) {
+			if ( in_array($name, $options['hidden']) ) {
+				$n++;
+				continue ;
+			}
+			
+			$title = __($name);
+			$width_type		= 'flex';
+			$width				= 1;
+			$sortable			= 'true';
+			$hideable			= 'true';
+$out .=<<<EOT
+{
+	text:'{$title}',
+	dataIndex:'{$name}',
+	{$width_type}:{$width},
+	sortable:{$sortable},
+	hideable:{$hideable}
+}
+EOT;
+			$out .= (++$n >= count($schema))?"":",";
+		}
+		$out .= ']';
+		
+		return $out;
+	}
+	
+	/**
+	 * undocumented function
+	 *
+	 * @return void
+	 * @author Kaz Watanabe
+	 **/
+	public function addProvidor($modelname, $options=array())
+	{
+		$defaults = array(
+			'router' => '/extjs/direct/router',
+		);
+		$options = array_merge($defaults, $options) ;
+		$actions = $this->actions($modelname);
+$out =<<<EOT
+Ext.direct.Manager.addProvider({
+	"url":"{$options['router']}",
+	"type":"remoting",
+	{$actions}
+});
+EOT;
+		return $out;
+	}
+	
+	/**
+	 * undocumented function
+	 *
+	 * @return void
+	 * @author Kaz Watanabe
+	 **/
+	public function window($modelname, $options = array())
+	{
+		$defaults = array(
+			'type'	=> 'edit',
+			'title'	=> null,
+			'closeAction'	=> 'close',
+			'width'				=> 600,
+			'layout'			=> 'fit',
+			'resizable'		=> false,
+			'modal'				=> true,
+			'border'			=> false,
+			
+		);
+		
+		
+		$options = array_merge($defaults, $options);
+		
+		
+	}
+	
+	/**
+	 * undocumented function
+	 *
+	 * @return void
+	 * @author Kaz Watanabe
+	 **/
+	public function form($modelname, $options=array())
+	{
+		$defaults = array(
+			'id'			=> null,
+			'frame'		=> true,
+			'border'	=> false,
+			'bodyPadding'	=> 5,
+			'autoScroll'	=> true,
+			'fieldDefaults'			=> array(
+				'labelAlign'			=> 'left',
+				'labelWidth'			=> 150,
+				'labelSeparator'	=> ':',
+				'anchor'					=> '100%',
+				'allowBlank'			=> false,
+				'msgTarget'				=> 'side',
+			),
+			'defaultType'	=> 'textfield',
+			'api'					=> array(),
+			'paramOrder'	=> array('id','escape'),
+			'dockedItems'	=> array(
+				'xtype'			=> 'toolbar',
+				'dock'			=> 'bottom',
+				'ui'				=> 'footer',
+				'items'			=> array(
+					'->',
+					array(
+						'xtype'			=> 'button',
+						'text'			=> __('Save'),
+						'minWidth'	=> 80,
+						'handler'		=> null,
+						'validMessage'				=> __('Invalid Data.'),
+						'saveConfirmMessage'	=> __(sprintf('Do you want to create the %s?', Inflector::tableize($modelname))),
+						'confirmTitle'				=> __('Confirm'),
+						'progressTitle'				=> __('Saving...'),
+					),
+					array(
+						'xtype'			=> 'button',
+						'text'			=> __('Cancel'),
+						'minWidth'	=> 80,
+						'handler'		=> null,
+					)
+				)
+			)
+		);
+		
+		$defaults['id'] = Inflector::tableize($modelname)."-form-id";
+		$options = array_merge_recursive($defaults, $options);
+
+		$options['frame']				= $options['frame']?'true':'false';
+		$options['border']			= $options['border']?'true':'false';
+		$options['autoScroll']	= $options['autoScroll']?'true':'false';
+		$options['fieldDefaults']['allowBlank']	= $options['fieldDefaults']['allowBlank']?'true':'false';
+		$options['dockedItems']['items'][1]['handler'] =<<<EOT
+function() {
+	var form = this.up('form').getForm()
+			win = this.up('window');
+
+	if (!form.isValid()) {
+		Ext.Msg.alert('{$options['dockedItems']['items'][1]['validMessage']}');
+		return ;
+	}
+	Ext.Msg.confirm(
+		'{$options['dockedItems']['items'][1]['confirmTitle']}', 
+		'{$options['dockedItems']['items'][1]['saveConfirmMessage']}', 
+		function(btn) {
+			if (btn == "yes") {
+				Ext.app.loading.show('{$options['dockedItems']['items'][1]['progressTitle']}');
+				form.submit({
+					clientValidation: true,
+					success: function(form, action) {	
+						Ext.app.posts.store.load();												
+						Ext.app.loading.hide();
+						form.reset();
+						win.close();
+					},
+					failure: function(form, action) {
+						Ext.app.loading.hide();
+						Ext.Msg.alert(action.result.message);
+					}
+				});
+			}
+		}, 
+		window
+	);
+}
+EOT;
+$options['dockedItems']['items'][2]['handler'] =<<<EOT
+function(){
+	this.up('form').getForm().reset();
+	this.up('window').close();
+}
+EOT;
+			// Create API function list
+		$api = '{';
+		$n = 0;
+		foreach($options['api'] as $index => $value) {
+			if ( $index > 0 ) 
+				$api .= ',';
+			$api .= "{$index}:{$value}";
+			$api .= (++$n >= count($options['api']))?"":",";
+		}
+		$api .= '}';
+		
+			// Create Form Items
+		$this->_model =& ClassRegistry::init($modelname);
+		$items = '';
+		$n = 0;
+		$this->_schema = $this->_model->schema();
+		foreach($this->_schema as $name => $prop) {
+			$result = $this->input($name);
+			if ( $result === false ) 
+				continue ;
+			
+			$items .= $result ;	
+			$items .= (++$n >= count($this->_schema))?"":",";
+		}
+		
+		$paramOrder = '';
+		$n = 0;
+		foreach($options['paramOrder'] as $param) {
+			$paramOrder .= "'{$param}'";
+			$paramOrder .= (++$n >= count($options['paramOrder']))?"":",";
+		}
+			// Create dockItems
+		$dockItems = '';
+		$n = 0;
+		foreach($options['dockedItems']['items'] as $item) {
+			if ( is_string($item) ) {
+				$result = "'{$item}'";
+			} else {
+			$result =<<<EOT
+{
+	xtype: '{$item['xtype']}',
+	text: '{$item['text']}',
+	minWidth: {$item['minWidth']},
+	handler: {$item['handler']}
+}
+EOT;
+			}
+			
+			$dockItems .= $result;
+			$dockItems .= (++$n >= count($options['dockedItems']['items']))?"\n":",\n";
+		}
+		
+		$out =<<<EOT
+Ext.create('Ext.form.Panel', {
+	id: '{$options['id']}',
+	frame: {$options['frame']},
+	border: {$options['border']},
+	bodyPadding: {$options['bodyPadding']},
+	autoScroll: {$options['autoScroll']},
+	fieldDefaults: {
+		labelAlign: '{$options['fieldDefaults']['labelAlign']}',
+		labelWidth: {$options['fieldDefaults']['labelWidth']},
+		labelSeparator: '{$options['fieldDefaults']['labelSeparator']}',
+		anchor: '{$options['fieldDefaults']['anchor']}',
+		allowBlank:{$options['fieldDefaults']['allowBlank']},
+		msgTarget: '{$options['fieldDefaults']['msgTarget']}'
+	},
+	defaultType: '{$options['defaultType']}',
+	activeItem:0,
+	api: {$api},
+	paramOrder: [{$paramOrder}],
+	items: [{$items}],
+dockedItems: [{
+	xtype: '{$options['dockedItems']['xtype']}',
+	dock: '{$options['dockedItems']['dock']}',
+	ui: '{$options['dockedItems']['ui']}',
+	items: [{$dockItems}]
+}]
+})
+EOT;
+		return $out;
+	}
+	
+	/**
+	 * undocumented function
+	 *
+	 * @return void
+	 * @author Kaz Watanabe
+	 **/
+	public function input($fieldname, $options=array())
+	{
+		$xtype = null;
+
+		$defaults = array(
+			'xtype'					=> $xtype,
+			'fieldLabel'		=> __(Inflector::classify($fieldname)),
+			'allowBlank'		=> true,
+			'selectOnFocus'	=> true,
+			'name'					=> Inflector::singularize($fieldname),
+		);
+	
+		$options = array_merge($defaults, $options) ;
+		if ( is_null($options['xtype']) ) {
+			if (isset($this->_schema[$fieldname]['key']) && $this->_schema[$fieldname]['key'] === 'primary') {
+				$options['xtype'] = 'hiddenfield';
+			} else if ( $fieldname === 'created' || $fieldname === 'modified' ) {
+				return false;
+			} else if ( $this->_schema[$fieldname]['type'] === 'text' ) {
+				$options['xtype'] = 'textarea';
+				$options['height'] = 100;
+			}
+		}
+		
+		$out = "{\n";
+		$n = 0 ;
+		foreach($options as $name => $value) {
+			if ( $name == 'xtype' && is_null($value) ) {
+				$n++;
+				continue;
+			}
+			
+			if ( is_string($value) ) {
+				$out .= "\t{$name}: '{$value}'";
+			} else if ( is_bool($value) ) {
+				$out .= "\t{$name}: ".(($value)?'true':'false');
+			} else {
+				$out .= "\t{$name}: {$value}";
+			}
+			$out .= (++$n >= count($options))?"\n":",\n";
+		}
+		
+		$out .= "}";
+		return $out;
 	}
 }

@@ -2,9 +2,23 @@
 App::uses('HtmlHelper', 'View/Helper');
 App::uses('JsHelper', 'View/Helper');
 App::uses('ExtjsEngineHelper', 'Extjs.View/Helper');
+App::uses('DirectComponent', 'Extjs.Controller/Component');
 App::uses('View', 'View');
+App::uses('ExtjsAppModel', 'Extjs.Model');
+
+class ExtjsEngineHelperTestModel extends ExtjsAppModel {
+//	public $table = 'ExtjsEngineHelperTestModel';
+	public $actsAs = array('Extjs.Direct');
+	public $directSettings = array(
+		'allow' => array('index', 'add', 'view', 'edit', 'del'),
+		'form'	=> array('add', 'edit', 'del'),
+	);
+}
 
 class ExtjsEngineHelperTestCase extends CakeTestCase {
+	public $fixtures = array(
+		'plugin.extjs.extjs_engine_helper_test_model',
+	);
 /**
  * startTest
  *
@@ -206,5 +220,128 @@ class ExtjsEngineHelperTestCase extends CakeTestCase {
 		));
 		$expected = 'Ext.Ajax.request({method:"post", params:Ext.Ajax.serializeForm(Ext.get("someId")), success:function (data, textStatus) {doFoo}, url:"\\/people\\/edit\\/1"});';
 		$this->assertEqual($result, $expected);
+	}
+	
+/**
+ * Test Namespace Generation
+ *
+ * @return void
+ */
+	function testNamespace() {
+		$result = $this->Extjs->ns('User');
+		$this->assertEqual("Ext.ns('Ext.app.users');", $result) ;
+
+		$result = $this->Extjs->ns('users');
+		$this->assertEqual("Ext.ns('Ext.app.users');", $result) ;
+	}
+	
+/**
+ * Test ExtDirect Action Generation
+ *
+ * @return void
+ */
+	function testCreateAction(){
+		$result = $this->Extjs->actions('ExtjsEngineHelperTestModel');
+		$expected =<<<EOT
+'actions':{
+'ExtjsEngineHelperTestModel':[
+{'name':'index','len':1,'formHandler':false},
+{'name':'add','len':1,'formHandler':true},
+{'name':'view','len':2,'formHandler':false},
+{'name':'edit','len':1,'formHandler':true},
+{'name':'del','len':1,'formHandler':true}
+]}
+EOT;
+		$this->assertEqual($expected, $result) ;
+	}
+	
+/**
+ * Test ExtModel Generation
+ *
+ * @return void
+ */
+	function testCreateModel(){
+		$result = $this->Extjs->getmodel('ExtjsEngineHelperTestModel');
+		$expected =<<<EOT
+Ext.define('ExtjsEngineHelperTestModel',{
+extend:'Ext.data.Model',
+fields:[
+'id',
+'name'
+]})
+EOT;
+		$this->assertEqual($expected, $result) ;
+	}
+
+/**
+ * Test DataStore Generation
+ *
+ * @return void
+ */
+	function testCreateStore(){
+		$result = $this->Extjs->store('ExtjsEngineHelperTestModel');
+		$expected =<<<EOT
+Ext.create('Ext.data.JsonStore',
+{"model":"ExtjsEngineHelperTestModel","remoteSort":true,"autoLoad":true,"sorters":[{"property":"id","direction":"DESC"}],"proxy":{"type":"direct","directFn":ExtjsEngineHelperTestModel.index,"reader":{"type":"json","root":"datas"},"listeners":{"exception":function(proxy, response, operation) {
+	if ( !response.result.success ) {
+		Ext.Msg.alert(response.result.message);
+	}
+}}}}
+)
+EOT;
+		$this->assertEqual($expected, $result) ;
+	}
+
+/**
+ * Test Grid Columns Generation
+ *
+ * @return void
+ */
+	function testCreateColumns(){
+		$result = $this->Extjs->columns('ExtjsEngineHelperTestModel');
+		$expected =<<<EOT
+[{
+	text:'name',
+	dataIndex:'name',
+	flex:1,
+	sortable:true,
+	hideable:true
+}]
+EOT;
+		$this->assertEqual($expected, $result) ;
+	}
+	
+/**
+ * Test FormPane; Generation
+ *
+ * @return void
+ */
+	function testCFormPanel(){
+		$options = array(
+			'api' => array('ExtjsEngineHelperTestModel.add'),
+		);
+		$result = $this->Extjs->form('ExtjsEngineHelperTestModel', $options);
+/*
+		$expected =<<<EOT
+Ext.create('Ext.form.Panel', {
+	id: 'extjs_engine_helper_test_models-form-id',
+	frame: true,
+	border: {$options['border']},
+	bodyPadding: {$options['bodyPadding']},
+	autoScroll: {$options['autoScroll']},
+	fieldDefaults: {
+		labelAlign: '{$options['fieldDefaults']['labelAlign']}',
+		labelWidth: {$options['fieldDefaults']['labelWidth']},
+		labelSeparator: '{$options['fieldDefaults']['labelSeparator']}',
+		anchor: '{$options['fieldDefaults']['anchor']}',
+		allowBlank:{$options['fieldDefaults']['allowBlank']},
+		msgTarget: '{$options['fieldDefaults']['msgTarget']}'
+	},
+	defaultType: '{$options['defaultType']}',
+	api: {$api},
+	paramOrder: ['escape']
+EOT;
+*/
+//		$this->assertEqual($expected, $result) ;
 	}
 }

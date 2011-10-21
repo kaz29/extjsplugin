@@ -1,0 +1,42 @@
+/***** Flash & error messages ****/
+/* 画面遷移後にFlashメッセージを表示する際のダミー */
+#flashMessage {
+	display:none;
+}
+
+#errorExplanation, div.flash, .nodata, .warning, .notice, .error {
+    padding: 15px 4px 6px 30px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    border: 2px solid;
+    width:100%;
+}
+
+div.flash {
+	position:absolute;
+	z-index:30000;
+	text-align:left;
+	width:100%!important;
+	height:50px;
+}
+
+div.flash.error, #errorExplanation {
+  background: url(../img/exclamation.png) 8px 16px no-repeat;
+  background-color: #fbecec;
+  border-color: #dd6565;
+  color: #880000;
+}
+
+div.flash.notice, div.flash.message {
+  background: url(../img/true.png) 8px 16px no-repeat;
+  background-color: #e9f8e9;
+  border-color: #b4d9b4;
+  color: #005F00;
+}
+
+div.flash.warning {
+	background: url(../img/caution.png) 8px 16px no-repeat;
+	background-color: #ffe4cd;
+	border-color: #f29c55;
+	color: #A6750C;
+}
