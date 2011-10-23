@@ -364,11 +364,11 @@ class ExtjsEngineHelper extends JsBaseEngineHelper
 		);
 		
 		$options = array_merge($defaults, $options) ;
-		$Model =& ClassRegistry::init($modelname);
-		$settings = $Model->getDirectSettings();
+		$this->_model =& ClassRegistry::init($modelname);
+		$settings = $this->_model->getDirectSettings();
 		
 			// TODO プラグイン配下のモデルを使用する処理が未実装
-		$out = "'{$Model->alias}':[\n";
+		$out = "'{$this->_model->alias}':[\n";
 		$n = 0;
 		foreach($settings['allow'] as $action) {
 			$paramnum = ($action=='view')?2:1;
@@ -399,14 +399,14 @@ class ExtjsEngineHelper extends JsBaseEngineHelper
 		);
 		
 		$options = array_merge($defaults, $options) ;
-		$Model =& ClassRegistry::init($modelname);
+		$this->_model =& ClassRegistry::init($modelname);
+		$this->_schema = $this->_model->schema();
 		
-		$out = "Ext.define('{$Model->alias}',{\nextend:'Ext.data.Model',\nfields:[\n";
-		$schema = $Model->schema();
+		$out = "Ext.define('{$this->_model->alias}',{\nextend:'Ext.data.Model',\nfields:[\n";
 		$n = 0;
-		foreach($schema as $name => $prop) {
+		foreach($this->_schema as $name => $prop) {
 			$out .= "'{$name}'";
-			$out .= (++$n >= count($schema))?"\n":",\n";
+			$out .= (++$n >= count($this->_schema))?"\n":",\n";
 		}
 		$out .= "]})";
 		

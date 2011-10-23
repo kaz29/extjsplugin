@@ -267,7 +267,8 @@ Ext.define('ExtjsEngineHelperTestModel',{
 extend:'Ext.data.Model',
 fields:[
 'id',
-'name'
+'name',
+'opendate'
 ]})
 EOT;
 		$this->assertEqual($expected, $result) ;
@@ -306,9 +307,23 @@ EOT;
 	flex:1,
 	sortable:true,
 	hideable:true
+},{
+	text:'opendate',
+	dataIndex:'opendate',
+	flex:1,
+	sortable:true,
+	hideable:true
 }]
 EOT;
 		$this->assertEqual($expected, $result) ;
+	}
+	
+/**
+ * Test FormItem Generation
+ *
+ * @return void
+ */
+	function testFormItem(){
 	}
 	
 /**
