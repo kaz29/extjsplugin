@@ -312,11 +312,11 @@ EOT;
 	}
 	
 /**
- * Test FormPane; Generation
+ * Test FormPanel Generation
  *
  * @return void
  */
-	function testCFormPanel(){
+	function testFormPanel(){
 		$options = array(
 			'api' => array('ExtjsEngineHelperTestModel.add'),
 		);
