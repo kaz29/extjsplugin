@@ -414,7 +414,7 @@ class ExtjsEngineHelper extends JsBaseEngineHelper
 	}
 	
 	/**
-	 * undocumented function
+	 * Create Ext.data.Store Definition
 	 *
 	 * @return void
 	 * @author Kaz Watanabe
@@ -453,7 +453,7 @@ EOT;
 	}
 	
 	/**
-	 * undocumented function
+	 * Create Ext.data.Store column Definition
 	 *
 	 * @return void
 	 * @author Kaz Watanabe
@@ -497,7 +497,7 @@ EOT;
 	}
 	
 	/**
-	 * undocumented function
+	 * Create Ext.direct remoting provider Definition
 	 *
 	 * @return void
 	 * @author Kaz Watanabe
@@ -520,33 +520,7 @@ EOT;
 	}
 	
 	/**
-	 * undocumented function
-	 *
-	 * @return void
-	 * @author Kaz Watanabe
-	 **/
-	public function window($modelname, $options = array())
-	{
-		$defaults = array(
-			'type'	=> 'edit',
-			'title'	=> null,
-			'closeAction'	=> 'close',
-			'width'				=> 600,
-			'layout'			=> 'fit',
-			'resizable'		=> false,
-			'modal'				=> true,
-			'border'			=> false,
-			
-		);
-		
-		
-		$options = array_merge($defaults, $options);
-		
-		
-	}
-	
-	/**
-	 * undocumented function
+	 * Create Ext.form.Panel Definition
 	 *
 	 * @return void
 	 * @author Kaz Watanabe
@@ -727,7 +701,7 @@ EOT;
 	}
 	
 	/**
-	 * undocumented function
+	 * Create Form Item Definition
 	 *
 	 * @return void
 	 * @author Kaz Watanabe
