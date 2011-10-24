@@ -324,6 +324,38 @@ EOT;
  * @return void
  */
 	function testFormItem(){
+		$this->Extjs->load_model('ExtjsEngineHelperTestModel') ;
+		
+			// text field
+		$result = $this->Extjs->input('name');
+		$expected =<<<EOT
+{
+	fieldLabel: 'Name',
+	allowBlank: true,
+	selectOnFocus: true,
+	name: 'name'
+}
+EOT;
+		$this->assertEqual($expected, $result) ;
+			// date field
+		$result = $this->Extjs->input('opendate');
+		$expected =<<<EOT
+{
+	xtype: 'fieldcontainer',
+	fieldLabel: 'Opendate',
+	defaults: {
+		hideLabel: true
+	},
+	items:[{
+	xtype: 'datefield',
+	allowBlank: true,
+	name: 'opendate',
+	format: 'Y/m/d',
+	editable: false
+}]
+}
+EOT;
+		$this->assertEqual($expected, $result) ;
 	}
 	
 /**

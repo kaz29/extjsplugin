@@ -628,11 +628,10 @@ EOT;
 		}
 		$api .= '}';
 		
+		$this->load_model($modelname) ;
 			// Create Form Items
-		$this->_model =& ClassRegistry::init($modelname);
 		$items = '';
 		$n = 0;
-		$this->_schema = $this->_model->schema();
 		foreach($this->_schema as $name => $prop) {
 			$result = $this->input($name);
 			if ( $result === false ) 
@@ -727,6 +726,12 @@ EOT;
 			} else if ( $this->_schema[$fieldname]['type'] === 'text' ) {
 				$options['xtype'] = 'textarea';
 				$options['height'] = 100;
+			} else if ( $this->_schema[$fieldname]['type'] === 'date' ) {
+				$options['xtype'] = 'datefield';
+				$options['format'] = 'Y/m/d';
+				$options['editable'] = false;
+				unset($options['fieldLabel']);
+				unset($options['selectOnFocus']);
 			}
 		}
 		
@@ -747,8 +752,34 @@ EOT;
 			}
 			$out .= (++$n >= count($options))?"\n":",\n";
 		}
-		
 		$out .= "}";
+		
+		if ( $options['xtype'] === 'datefield' ) {
+			$fieldlabel = __(Inflector::classify($fieldname));
+			$out =<<<EOT
+{
+	xtype: 'fieldcontainer',
+	fieldLabel: '{$fieldlabel}',
+	defaults: {
+		hideLabel: true
+	},
+	items:[{$out}]
+}
+EOT;
+		}
+		
 		return $out;
+	}
+	
+	/**
+	 * Load Model data
+	 *
+	 * @return void
+	 * @author Kaz Watanabe
+	 **/
+	public function load_model($modelname)
+	{
+		$this->_model =& ClassRegistry::init($modelname);
+		$this->_schema = $this->_model->schema();
 	}
 }
