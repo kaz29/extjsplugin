@@ -41,8 +41,8 @@
 	$ cp -r resources/themes APP/webroot/ext/
 
  	// ステータスバー機能関連ファイルをコピー
-	$ cp -r examples/ux/statusbar APP/webroot/ext/ux/
-	$ cp -r examples/ux/css/CheckHeader.css APP/webroot/ext/ux/css/
+	$ cp -r examples/ux/statusbar APP/webroot/ext/js/ux/
+	$ cp -r examples/ux/css/CheckHeader.css APP/webroot/ext/js/ux/css/
 
 ### Bake
 

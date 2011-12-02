@@ -599,6 +599,8 @@ EOT;
 		$defaults['id'] = Inflector::tableize($modelname)."-form-id";
 		$options = array_merge_recursive($defaults, $options);
 
+		$model_tableize_name = Inflector::tableize($modelname);
+		
 		$options['frame']				= $options['frame']?'true':'false';
 		$options['border']			= $options['border']?'true':'false';
 		$options['autoScroll']	= $options['autoScroll']?'true':'false';
@@ -621,7 +623,7 @@ function() {
 				form.submit({
 					clientValidation: true,
 					success: function(form, action) {	
-						Ext.app.posts.store.load();												
+						Ext.app.{$model_tableize_name}.store.load();												
 						Ext.app.loading.hide();
 						form.reset();
 						win.close();
@@ -738,10 +740,10 @@ EOT;
 
 		$defaults = array(
 			'xtype'					=> $xtype,
-			'fieldLabel'		=> __(Inflector::classify($fieldname)),
+			'fieldLabel'		=> __($fieldname),
 			'allowBlank'		=> true,
 			'selectOnFocus'	=> true,
-			'name'					=> Inflector::singularize($fieldname),
+			'name'					=> $fieldname,
 		);
 	
 		$options = array_merge($defaults, $options) ;
