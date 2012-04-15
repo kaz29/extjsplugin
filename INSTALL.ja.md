@@ -29,20 +29,20 @@
 
  	// APP/webroot 以下に ExtJS用ディレクトリを作成
 	$ cd APP/webroot
-	$ mkdir -p ext/js/ux/css
+	$ mkdir -p resources/js/ux/css
 
 	// ExtJS関連ファイルを APP/webroot/extにコピー
 	$ cd [ExtJSを解凍したディレクトリ]
 
  	// ExtJSの基本ファイルをコピー
 
-	$ cp *.js APP/webroot/ext/js/
-	$ cp -r resources/css APP/webroot/ext/
-	$ cp -r resources/themes APP/webroot/ext/
+	$ cp *.js APP/webroot/resources/js/
+	$ cp -r resources/css APP/webroot/resources/
+	$ cp -r resources/themes APP/webroot/resources/
 
  	// ステータスバー機能関連ファイルをコピー
-	$ cp -r examples/ux/statusbar APP/webroot/ext/ux/
-	$ cp -r examples/ux/css/CheckHeader.css APP/webroot/ext/ux/css/
+	$ cp -r examples/ux/statusbar APP/webroot/resources/ux/
+	$ cp -r examples/ux/css/CheckHeader.css APP/webroot/resources/ux/css/
 
 ### Bake
 

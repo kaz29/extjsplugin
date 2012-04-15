@@ -12,11 +12,11 @@
 		echo $this->Html->css('/extjs/css/common');
 		echo $this->Html->css('/extjs/css/loading');
 		echo $this->Html->css('/extjs/css/flash');
-		echo $this->Html->css('/ext/css/ext-all');
-		echo $this->Html->css('/ext/js/ux/statusbar/css/statusbar');
-		echo $this->Html->css('/ext/js/ux/css/CheckHeader');
-		echo $this->Html->script('/ext/js/bootstrap');
-		echo $this->Html->script('/ext/js/ux/statusbar/StatusBar');
+		echo $this->Html->css('/resources/css/ext-all');
+		echo $this->Html->css('/resources/js/ux/statusbar/css/statusbar');
+		echo $this->Html->css('/resources/js/ux/css/CheckHeader');
+		echo $this->Html->script('/resources/js/bootstrap');
+		echo $this->Html->script('/resources/js/ux/statusbar/StatusBar');
 		echo $this->Html->script('/extjs/direct/init');
 		echo $scripts_for_layout;
 	?>
