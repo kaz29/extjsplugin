@@ -527,6 +527,8 @@ EOT;
 	 **/
 	public function form($modelname, $options=array())
 	{
+		$tablized_modelname =  Inflector::tableize($modelname);
+
 		$defaults = array(
 			'id'			=> null,
 			'frame'		=> true,
@@ -556,7 +558,7 @@ EOT;
 						'minWidth'	=> 80,
 						'handler'		=> null,
 						'validMessage'				=> __('Invalid Data.'),
-						'saveConfirmMessage'	=> __(sprintf('Do you want to create the %s?', Inflector::tableize($modelname))),
+						'saveConfirmMessage'	=> __(sprintf('Do you want to create the %s?', $tablized_modelname)),
 						'confirmTitle'				=> __('Confirm'),
 						'progressTitle'				=> __('Saving...'),
 					),
@@ -570,7 +572,7 @@ EOT;
 			)
 		);
 		
-		$defaults['id'] = Inflector::tableize($modelname)."-form-id";
+		$defaults['id'] = "{$tablized_modelname}-form-id";
 		$options = array_merge_recursive($defaults, $options);
 
 		$options['frame']				= $options['frame']?'true':'false';
@@ -595,7 +597,7 @@ function() {
 				form.submit({
 					clientValidation: true,
 					success: function(form, action) {	
-						Ext.app.posts.store.load();												
+						Ext.app.{$tablized_modelname}.store.load();												
 						Ext.app.loading.hide();
 						form.reset();
 						win.close();
