@@ -564,6 +564,7 @@ EOT;
 			'defaultType'	=> 'textfield',
 			'api'					=> array(),
 			'paramOrder'	=> array('id','escape'),
+			'items'       => null,
 			'dockedItems'	=> array(
 				'xtype'			=> 'toolbar',
 				'dock'			=> 'bottom',
@@ -591,13 +592,16 @@ EOT;
 		);
 		
 		$defaults['id'] = "{$tablized_modelname}-form-id";
-		$options = array_merge_recursive($defaults, $options);
+		$options = array_merge($defaults, $options);
 
 		$options['frame']				= $options['frame']?'true':'false';
 		$options['border']			= $options['border']?'true':'false';
 		$options['autoScroll']	= $options['autoScroll']?'true':'false';
 		$options['fieldDefaults']['allowBlank']	= $options['fieldDefaults']['allowBlank']?'true':'false';
-		$options['dockedItems']['items'][1]['handler'] =<<<EOT
+
+		if (isset($options['dockedItems']['items'][1]) && 
+		    is_null($options['dockedItems']['items'][1]['handler'])) {
+		  $options['dockedItems']['items'][1]['handler'] =<<<EOT
 function() {
 	var form = this.up('form').getForm()
 			win = this.up('window');
@@ -631,41 +635,61 @@ function() {
 	);
 }
 EOT;
-$options['dockedItems']['items'][2]['handler'] =<<<EOT
+    }
+    
+		if (isset($options['dockedItems']['items'][2]) && 
+		    is_null($options['dockedItems']['items'][2]['handler'])) {
+      $options['dockedItems']['items'][2]['handler'] =<<<EOT
 function(){
 	this.up('form').getForm().reset();
 	this.up('window').close();
 }
 EOT;
-			// Create API function list
-		$api = '{';
-		$n = 0;
-		foreach($options['api'] as $index => $value) {
-		  if (!empty($plugin)) {
-		    $api_action = "{$plugin}_{$value}";
-		  } else {
-		    $api_action = $value;
-		  }
+    }
+    
+    $api = '';
+    if (isset($options['api'])) {
+  			// Create API function list
+  		$api = 'api: {';
+  		$n = 0;
+  		foreach($options['api'] as $index => $value) {
+  		  if (!empty($plugin)) {
+  		    $api_action = "{$plugin}_{$value}";
+  		  } else {
+  		    $api_action = $value;
+  		  }
 		  
-			if ( $index > 0 ) 
-				$api .= ',';
-			$api .= "{$index}:{$api_action}";
-			$api .= (++$n >= count($options['api']))?"":",";
+  			if ( $index > 0 ) 
+  				$api .= ',';
+  			$api .= "{$index}:{$api_action}";
+  			$api .= (++$n >= count($options['api']))?"":",";
+  		}
+  		$api .= '},';
 		}
-		$api .= '}';
-		
-		$this->load_model($modelname) ;
 			// Create Form Items
 		$items = '';
-		$n = 0;
-		foreach($this->_schema as $name => $prop) {
-			$result = $this->input($name);
-			if ( $result === false ) 
-				continue ;
+		if (is_null($options['items'])) {
+  		$this->load_model($modelname) ;
+  		foreach($this->_schema as $name => $prop) {
+  			$result = $this->input($name);
+  			if ( $result === false ) 
+  				continue ;
 			
-			$items .= $result ;	
-			$items .= (++$n >= count($this->_schema))?"":",";
-		}
+  		  if (strlen($items) > 0) 
+  		    $items .= ',';
+  			$items .= $result ;	
+  		}
+  	} else {
+  		foreach($options['items'] as $name => $prop) {
+  			$result = $this->input($name, $prop);
+  			if ( $result === false ) 
+  				continue ;
+			
+  		  if (strlen($items) > 0) 
+  		    $items .= ',';
+  			$items .= $result ;	
+  		}
+  	}
 		
 		$paramOrder = '';
 		$n = 0;
@@ -677,10 +701,13 @@ EOT;
 		$dockItems = '';
 		$n = 0;
 		foreach($options['dockedItems']['items'] as $item) {
+  		  if (strlen($dockItems) > 0) 
+  		    $dockItems .= ',';
+
 			if ( is_string($item) ) {
 				$result = "'{$item}'";
 			} else {
-			$result =<<<EOT
+			  $result =<<<EOT
 {
 	xtype: '{$item['xtype']}',
 	text: '{$item['text']}',
@@ -691,7 +718,7 @@ EOT;
 			}
 			
 			$dockItems .= $result;
-			$dockItems .= (++$n >= count($options['dockedItems']['items']))?"\n":",\n";
+//			$dockItems .= (++$n >= count($options['dockedItems']['items']))?"\n":",\n";
 		}
 		
 		$out =<<<EOT
@@ -711,7 +738,7 @@ Ext.create('Ext.form.Panel', {
 	},
 	defaultType: '{$options['defaultType']}',
 	activeItem:0,
-	api: {$api},
+	{$api} // カンマなしで正解
 	paramOrder: [{$paramOrder}],
 	items: [{$items}],
 dockedItems: [{
