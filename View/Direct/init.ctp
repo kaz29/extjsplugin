@@ -35,7 +35,9 @@ Ext.app = {
       id: 'header',
       region: 'north',
       html: '<h1><?php echo __('Unknown Application'); ?></h1>',
-      height: 30
+      height: 30,
+	    split: false,
+      margins: '0 0 5 0',
     },
 		menu:{
       region: 'west',
