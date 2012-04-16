@@ -24,7 +24,6 @@
  * @return void
  */
 	public function <?php echo $admin ?>index() {
-		$this->plugin = 'Extjs';
 	}
 
 /**

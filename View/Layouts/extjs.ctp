@@ -25,13 +25,13 @@
 <div class="container">
 	<!--maincontents-->
 	<div id="content">
-		<?php echo $this->element('menu'); ?>
+		<?php echo $this->element('Extjs.menu'); ?>
 		<div id='flash'></div>
 		<?php echo $this->Session->flash(); ?>
 		<?php echo $content_for_layout; ?>
 	</div>
 	<!--/maincontents-->
-	<?php echo $this->element('loading'); ?>
+	<?php echo $this->element('Extjs.loading'); ?>
 </div>
 </body>
 </html>
