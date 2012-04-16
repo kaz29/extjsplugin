@@ -109,10 +109,8 @@ class DirectComponent extends Component
 	      /**
 	       * read request body
 	       */
-$this->log($this->params, LOG_DEBUG);
-$this->log($this->Controller->request->data, LOG_DEBUG);
 
-$this->params = $this->Controller->request->data;
+      $this->params = $this->Controller->request->data;
 	    if( isset($GLOBALS['HTTP_RAW_POST_DATA']) ) {
 	      $requests = json_decode($GLOBALS['HTTP_RAW_POST_DATA']);
 				if ( function_exists('json_last_error') ) {
