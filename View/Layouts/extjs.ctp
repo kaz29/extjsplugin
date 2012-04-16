@@ -3,7 +3,7 @@
 <head>
 	<?php echo $this->Html->charset(); ?>
 	<title>
-		<?php __('dōTERRA Mobile:'); ?>
+		<?php __('Unknown Application:'); ?>
 		<?php echo $title_for_layout; ?>
 	</title>
 	<?php
