@@ -496,6 +496,7 @@ EOT;
 			$width				= (isset($options[$name]['width']))?$options[$name]['width']:1;
 			$sortable			= (isset($options[$name]['sortable']))?$options[$name]['sortable']:'true';
 			$hideable			= (isset($options[$name]['hideable']))?$options[$name]['hideable']:'true';
+			$align  			= (isset($options[$name]['align']))?$options[$name]['align']:'left';
 			
 			$option_fields = '';
 			
@@ -508,7 +509,8 @@ $out .=<<<EOT
 	dataIndex:'{$name}',
 	{$width_type}:{$width},
 	sortable:{$sortable},
-	hideable:{$hideable}{$option_fields}
+	hideable:{$hideable},
+	align:'{$align}'{$option_fields}
 }
 EOT;
 		}
