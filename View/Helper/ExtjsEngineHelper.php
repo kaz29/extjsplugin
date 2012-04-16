@@ -802,13 +802,17 @@ EOT;
 				continue;
 			}
 			
-			if ( is_string($value) ) {
-				$out .= "\t{$name}: '{$value}'";
-			} else if ( is_bool($value) ) {
-				$out .= "\t{$name}: ".(($value)?'true':'false');
+			if ($name === 'items') {
+  			$out .= "\t{$name}: [{$value}]";
 			} else {
-				$out .= "\t{$name}: {$value}";
-			}
+  			if ( is_string($value) ) {
+  				$out .= "\t{$name}: '{$value}'";
+  			} else if ( is_bool($value) ) {
+  				$out .= "\t{$name}: ".(($value)?'true':'false');
+  			} else {
+  				$out .= "\t{$name}: {$value}";
+  			}
+  		}
 			$out .= (++$n >= count($options))?"\n":",\n";
 		}
 		$out .= "}";
