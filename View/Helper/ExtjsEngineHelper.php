@@ -480,33 +480,37 @@ EOT;
 		$defaults = array(
 			'hidden' => array('id'),
 		);
-		
-		$options = array_merge_recursive($defaults, $options);
+		$options = array_merge($defaults, $options);
 		$Model =& ClassRegistry::init($modelname);
 		$schema = $Model->schema();
-		$n = 0;
 		$out = '[';
-		foreach($schema as $name => $prop) {
+		foreach($schema as $name => $prop) {		    
 			if ( in_array($name, $options['hidden']) ) {
-				$n++;
 				continue ;
 			}
+		  if (strlen($out) > 1)
+		    $out .= ",";
 			
-			$title = __($name);
-			$width_type		= 'flex';
-			$width				= 1;
-			$sortable			= 'true';
-			$hideable			= 'true';
+			$title        = (isset($options[$name]['title']))?$options[$name]['title']:__($name);
+			$width_type		= (isset($options[$name]['width_type']))?$options[$name]['width_type']:'flex'; // flex or size
+			$width				= (isset($options[$name]['width']))?$options[$name]['width']:1;
+			$sortable			= (isset($options[$name]['sortable']))?$options[$name]['sortable']:'true';
+			$hideable			= (isset($options[$name]['hideable']))?$options[$name]['hideable']:'true';
+			
+			$option_fields = '';
+			
+			if (isset($options[$name]['renderer'])) {
+			  $option_fields .= ",\n	renderer: {$options[$name]['renderer']}";
+			}
 $out .=<<<EOT
 {
 	text:'{$title}',
 	dataIndex:'{$name}',
 	{$width_type}:{$width},
 	sortable:{$sortable},
-	hideable:{$hideable}
+	hideable:{$hideable}{$option_fields}
 }
 EOT;
-			$out .= (++$n >= count($schema))?"":",";
 		}
 		$out .= ']';
 		
