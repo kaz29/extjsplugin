@@ -347,7 +347,8 @@ class ExtjsEngineHelper extends JsBaseEngineHelper
 	 **/
 	public function ns($modelname)
 	{
-		$tablename = Inflector::tableize($modelname);
+	  list($plugin,$name) = pluginSplit($modelname);
+		$tablename = Inflector::tableize($name);
 		return "Ext.ns('Ext.app.{$tablename}');";
 	}
 	
@@ -367,8 +368,13 @@ class ExtjsEngineHelper extends JsBaseEngineHelper
 		$this->_model =& ClassRegistry::init($modelname);
 		$settings = $this->_model->getDirectSettings();
 		
-			// TODO プラグイン配下のモデルを使用する処理が未実装
-		$out = "'{$this->_model->alias}':[\n";
+		list($plugin, $name) = pluginSplit($modelname);
+		if (!empty($plugin)) {
+  		$out = "'{$plugin}_{$this->_model->alias}':[\n";
+  	} else {
+  		$out = "'{$this->_model->alias}':[\n";
+  	}
+  	
 		$n = 0;
 		foreach($settings['allow'] as $action) {
 			$paramnum = ($action=='view')?2:1;
@@ -402,7 +408,12 @@ class ExtjsEngineHelper extends JsBaseEngineHelper
 		$this->_model =& ClassRegistry::init($modelname);
 		$this->_schema = $this->_model->schema();
 		
-		$out = "Ext.define('{$this->_model->alias}',{\nextend:'Ext.data.Model',\nfields:[\n";
+		list($plugin, $name) = pluginSplit($modelname);
+		if (!empty($plugin)) {
+		  $out = "Ext.define('{$plugin}_{$this->_model->alias}',{\nextend:'Ext.data.Model',\nfields:[\n";
+		} else {
+		  $out = "Ext.define('{$this->_model->alias}',{\nextend:'Ext.data.Model',\nfields:[\n";
+		}
 		$n = 0;
 		foreach($this->_schema as $name => $prop) {
 			$out .= "'{$name}'";
@@ -428,9 +439,15 @@ function(proxy, response, operation) {
 	}
 }
 EOT;
+		list($plugin, $name) = pluginSplit($modelname);
+		if (!empty($plugin)) {
+      $tmpmodelname = "{$plugin}_{$name}";
+    } else {
+      $tmpmodelname = $modelname;
+    }
 			// TODO: Listenerをカスタマイズする方法を実装
 		$defaults = array(
-			'model'				=> $modelname,
+			'model'				=> $tmpmodelname,
 			'remoteSort' 	=> true,
 			'autoLoad'		=> true,
 			'sorters'			=> array(array('property'=>'id', 'direction'=>'DESC')),
@@ -448,7 +465,7 @@ EOT;
 		
 		$tmpstr = json_encode($options);
 		$tmpstr = str_replace('"___EXCEPTION_LISTENER___"', $exception_function, $tmpstr);
-		$tmpstr = str_replace('"___DIRECT_FUNCTION___"', "{$modelname}.index", $tmpstr);
+		$tmpstr = str_replace('"___DIRECT_FUNCTION___"', "{$tmpmodelname}.index", $tmpstr);
 		return "Ext.create('Ext.data.JsonStore',\n{$tmpstr}\n)";
 	}
 	
@@ -527,7 +544,8 @@ EOT;
 	 **/
 	public function form($modelname, $options=array())
 	{
-		$tablized_modelname =  Inflector::tableize($modelname);
+	  list($plugin, $name) = pluginSplit($modelname);
+		$tablized_modelname =  Inflector::tableize($name);
 
 		$defaults = array(
 			'id'			=> null,
@@ -623,9 +641,15 @@ EOT;
 		$api = '{';
 		$n = 0;
 		foreach($options['api'] as $index => $value) {
+		  if (!empty($plugin)) {
+		    $api_action = "{$plugin}_{$value}";
+		  } else {
+		    $api_action = $value;
+		  }
+		  
 			if ( $index > 0 ) 
 				$api .= ',';
-			$api .= "{$index}:{$value}";
+			$api .= "{$index}:{$api_action}";
 			$api .= (++$n >= count($options['api']))?"":",";
 		}
 		$api .= '}';
