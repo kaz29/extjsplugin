@@ -531,10 +531,12 @@ EOT;
 			'router' => '/extjs/direct/router',
 		);
 		$options = array_merge($defaults, $options) ;
+		
+		$url = (is_array($options['router']))?Router::url($options['router']):$options['router'];
 		$actions = $this->actions($modelname);
 $out =<<<EOT
 Ext.direct.Manager.addProvider({
-	"url":"{$options['router']}",
+	"url":"{$url}",
 	"type":"remoting",
 	{$actions}
 });
