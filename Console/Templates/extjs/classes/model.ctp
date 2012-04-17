@@ -214,7 +214,7 @@ endif;
 		$this->create();
 		$this->set($data);
 		if ( !$this->validates() ) {
-			return $this->makeDirectResponce(false, array('errors'=> $this->invalidFields()));
+			return $this->makeDirectResponce(false, array('errors'=> $this->validationErrors));
 		}
 		if ($this->save($data)) {
 			$result = array('id' => $this->id, 'message'=>'The news has been created.');
@@ -260,7 +260,7 @@ endif;
 		$this->create();
 		$this->set($data);
 		if ( !$this->validates() ) {
-			$result = $this->makeDirectResponce(false, array('errors'=> $this->invalidFields()));
+			$result = $this->makeDirectResponce(false, array('errors'=> $this->validationErrors));
 			
 			return $result;
 		}
