@@ -365,7 +365,7 @@ class ExtjsEngineHelper extends JsBaseEngineHelper
 		);
 		
 		$options = array_merge($defaults, $options) ;
-		$this->_model =& ClassRegistry::init($modelname);
+		$this->_model = ClassRegistry::init($modelname);
 		$settings = $this->_model->getDirectSettings();
 		
 		list($plugin, $name) = pluginSplit($modelname);
@@ -405,7 +405,7 @@ class ExtjsEngineHelper extends JsBaseEngineHelper
 		);
 		
 		$options = array_merge($defaults, $options) ;
-		$this->_model =& ClassRegistry::init($modelname);
+		$this->_model = ClassRegistry::init($modelname);
 		$this->_schema = $this->_model->schema();
 		
 		list($plugin, $name) = pluginSplit($modelname);
@@ -481,7 +481,7 @@ EOT;
 			'hidden' => array('id'),
 		);
 		$options = array_merge($defaults, $options);
-		$Model =& ClassRegistry::init($modelname);
+		$Model = ClassRegistry::init($modelname);
 		$schema = $Model->schema();
 		$out = '[';
 		foreach($schema as $name => $prop) {		    
@@ -847,7 +847,7 @@ EOT;
 	 **/
 	public function load_model($modelname)
 	{
-		$this->_model =& ClassRegistry::init($modelname);
+		$this->_model = ClassRegistry::init($modelname);
 		$this->_schema = $this->_model->schema();
 	}
 }
