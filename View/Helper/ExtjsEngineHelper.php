@@ -627,7 +627,10 @@ function() {
 				form.submit({
 					clientValidation: true,
 					success: function(form, action) {	
-						Ext.app.{$tablized_modelname}.store.load();												
+					  if (typeof Ext.app.{$tablized_modelname} != "undefined" &&
+					      typeof Ext.app.{$tablized_modelname}.store != "undefined") {
+						  Ext.app.{$tablized_modelname}.store.load();	
+						}											
 						Ext.app.loading.hide();
 						form.reset();
 						win.close();
