@@ -794,20 +794,24 @@ EOT;
 	
 		$options = array_merge($defaults, $options) ;
 		if ( is_null($options['xtype']) ) {
-			if (isset($this->_schema[$fieldname]['key']) && $this->_schema[$fieldname]['key'] === 'primary') {
-				$options['xtype'] = 'hiddenfield';
-			} else if ( $fieldname === 'created' || $fieldname === 'modified' ) {
-				return false;
-			} else if ( $this->_schema[$fieldname]['type'] === 'text' ) {
-				$options['xtype'] = 'textarea';
-				$options['height'] = 100;
-			} else if ( $this->_schema[$fieldname]['type'] === 'date' ) {
-				$options['xtype'] = 'datefield';
-				$options['format'] = 'Y/m/d';
-				$options['editable'] = false;
-				unset($options['fieldLabel']);
-				unset($options['selectOnFocus']);
-			}
+		  if (!isset($this->_schame[$fieldname])) {
+  			$options['xtype'] = 'textfield';
+	    } else {
+  			if (isset($this->_schema[$fieldname]['key']) && $this->_schema[$fieldname]['key'] === 'primary') {
+  				$options['xtype'] = 'hiddenfield';
+  			} else if ( $fieldname === 'created' || $fieldname === 'modified' ) {
+  				return false;
+  			} else if ( $this->_schema[$fieldname]['type'] === 'text' ) {
+  				$options['xtype'] = 'textarea';
+  				$options['height'] = 100;
+  			} else if ( $this->_schema[$fieldname]['type'] === 'date' ) {
+  				$options['xtype'] = 'datefield';
+  				$options['format'] = 'Y/m/d';
+  				$options['editable'] = false;
+  				unset($options['fieldLabel']);
+  				unset($options['selectOnFocus']);
+  			}
+  		}
 		}
 		
 		$out = "{\n";
