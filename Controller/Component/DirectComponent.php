@@ -101,16 +101,21 @@ class DirectComponent extends Component
 	private function router()
 	{
     Configure::write('debug',0) ;
+    $isUpload = (Set::extract($this->data, 'extUpload')=='true');
+
 		try {
-			if ( !isset($_SERVER['HTTP_X_REQUESTED_WITH']) || 
-					 $_SERVER['HTTP_X_REQUESTED_WITH'] !== 'XMLHttpRequest' ) {
+     if (!$isUpload && 
+			    (!isset($_SERVER['HTTP_X_REQUESTED_WITH']) || 
+					 $_SERVER['HTTP_X_REQUESTED_WITH'] !== 'XMLHttpRequest') ) {
 				throw new ExtDirectException(__('Invalid Request'), array(), 32001);
+			}
+			
+			if ($isUpload) {
+			  $this->settings['content_type'] = 'text/html; charet=UTF-8';
 			}
 	      /**
 	       * read request body
 	       */
-
-      $this->params = $this->Controller->request->data;
 	    if( isset($GLOBALS['HTTP_RAW_POST_DATA']) ) {
 	      $requests = json_decode($GLOBALS['HTTP_RAW_POST_DATA']);
 				if ( function_exists('json_last_error') ) {
@@ -127,18 +132,19 @@ class DirectComponent extends Component
 				} else {
 	      	$requests->form   = false;
 				}
-	    } else if ( isset($this->params['extAction']) ) {
+        $requests->upload = $isUpload;
+	    } else if (isset($this->data['extAction'])) {
 	      $request = new ExtDirectAction;
-      
-	      $requests->type   	= Set::extract($this->params, 'extType');
-	      $requests->action 	= Set::extract($this->params, 'extAction');
-	      $requests->method 	= Set::extract($this->params, 'extMethod');
-	      $requests->tid    	= Set::extract($this->params, 'extTID');
-				if ( isset($this->data) && count($this->data) > 0 ) {
-	      	$requests->data   = $this->data;
+              
+	      $requests->type   	= Set::extract($this->data, 'extType');
+	      $requests->action 	= Set::extract($this->data, 'extAction');
+	      $requests->method 	= Set::extract($this->data, 'extMethod');
+	      $requests->tid    	= Set::extract($this->data, 'extTID');
+				if ( isset($this->params['form']) && count($this->params['form']) > 0 ) {
+	      	$requests->data   = $this->params['form'];
 				} else {
 					$requests->data = array();
-					foreach($this->params as $key => $value) {
+					foreach($this->data as $key => $value) {
 						if ( strncmp($key, 'ext', 3 ) === 0 )
 							continue ;
 						$requests->data[$key] = $value;
@@ -146,7 +152,7 @@ class DirectComponent extends Component
 				}
 			
 	      $requests->form   = true;
-	      $requests->upload = (Set::extract($this->params, 'form.extUpload')=='true');
+	      $requests->upload = $isUpload ;
 	    } else {
 				throw new ExtDirectException(__('Invalid Request'), array(), 32003);
 	    }
