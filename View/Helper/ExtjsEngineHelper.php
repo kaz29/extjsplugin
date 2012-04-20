@@ -479,10 +479,21 @@ EOT;
 	{
 		$defaults = array(
 			'hidden' => array('id'),
+			'order'  => null,
 		);
 		$options = array_merge($defaults, $options);
 		$Model = ClassRegistry::init($modelname);
 		$schema = $Model->schema();
+		
+		if (is_array($options['order'])) {
+		  $orderd = array();
+		  foreach($options['order'] as $name) {
+		    $orderd[$name] = $schema[$name];
+		  }
+		  
+		  $schema = $orderd;
+		}
+		
 		$out = '[';
 		foreach($schema as $name => $prop) {		    
 			if ( in_array($name, $options['hidden']) ) {
