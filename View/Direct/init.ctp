@@ -10,7 +10,7 @@ Ext.app = {
 	    Ext.app.flash(flashEl.dom.innerHTML, flashEl.dom.className);
 	  }
 
-		Ext.app.items.main.title = maintitle;
+		Ext.app._items.main.title = maintitle;
 		Ext.create('Ext.Viewport', {
 	    layout: {
 	      type: 'border',
@@ -20,16 +20,16 @@ Ext.app = {
 	      split: true
 	    },
 	    items: [
-				Ext.app.items.header,
-				Ext.app.items.menu,
-				Ext.app.items.main,
-				Ext.app.items.status
+				Ext.app._items.header,
+				Ext.app._items.menu,
+				Ext.app._items.main,
+				Ext.app._items.status
 			]
 	  });
 	
 		Ext.get('menu-area').show();
 	},
-	items:{
+	_items:{
 		header:{
       xtype: 'box',
       id: 'header',
