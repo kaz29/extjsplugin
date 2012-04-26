@@ -405,6 +405,7 @@ class ExtjsEngineHelper extends JsBaseEngineHelper
 	{
 		$defaults = array(
 			'actions' => true,
+			'fields'  => array(),
 		);
 		
 		$options = array_merge($defaults, $options) ;
@@ -418,9 +419,15 @@ class ExtjsEngineHelper extends JsBaseEngineHelper
 		  $out = "Ext.define('{$this->_model->alias}',{\nextend:'Ext.data.Model',\nfields:[\n";
 		}
 		$n = 0;
-		foreach($this->_schema as $name => $prop) {
+		
+		$schema = $this->_schema;
+		foreach($options['fields'] as $field) {
+		  $schema[$field] = array();
+		}
+		
+		foreach($schema as $name => $prop) {
 			$out .= "'{$name}'";
-			$out .= (++$n >= count($this->_schema))?"\n":",\n";
+			$out .= (++$n >= count($schema))?"\n":",\n";
 		}
 		$out .= "]})";
 		
@@ -491,7 +498,11 @@ EOT;
 		if (is_array($options['order'])) {
 		  $orderd = array();
 		  foreach($options['order'] as $name) {
-		    $orderd[$name] = $schema[$name];
+		    if (isset($schema[$name])) {
+		      $orderd[$name] = $schema[$name];
+		    } else {
+		      $orderd[$name] = array();
+		    }
 		  }
 		  
 		  $schema = $orderd;
