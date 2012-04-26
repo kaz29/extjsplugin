@@ -362,6 +362,7 @@ class ExtjsEngineHelper extends JsBaseEngineHelper
 	{
 		$defaults = array(
 			'actions' => true,
+			'action_params' => array(),
 		);
 		
 		$options = array_merge($defaults, $options) ;
@@ -378,7 +379,9 @@ class ExtjsEngineHelper extends JsBaseEngineHelper
 		$n = 0;
 		foreach($settings['allow'] as $action) {
 			$paramnum = ($action=='view')?2:1;
-				// TODO: パラメータ数を設定で切る様修正
+		  if (array_key_exists($action, $options['action_params'])) {
+		    $paramnum = $options['action_params'][$action];
+		  }
 			$form = (in_array($action, $settings['form']))?'true':'false';
 			$out .= "{'name':'{$action}','len':{$paramnum},'formHandler':{$form}}";
 			$out .= (++$n >= count($settings['allow']))?"\n":",\n";
@@ -540,11 +543,12 @@ EOT;
 	{
 		$defaults = array(
 			'router' => '/extjs/direct/router',
+			'action_params' => array(),
 		);
 		$options = array_merge($defaults, $options) ;
 		
 		$url = (is_array($options['router']))?Router::url($options['router']):$options['router'];
-		$actions = $this->actions($modelname);
+		$actions = $this->actions($modelname, array('action_params'=>$options['action_params']));
 $out =<<<EOT
 Ext.direct.Manager.addProvider({
 	"url":"{$url}",
