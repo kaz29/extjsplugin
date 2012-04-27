@@ -47,7 +47,7 @@ class <?php echo $controllerName; ?>Controller extends <?php echo $plugin; ?>App
  */
 	public $scaffold;
 <?php else: ?>
-	public $layout = 'extjs';
+	public $layout = 'Extjs.extjs';
 <?php
 if (count($helpers)):
 	echo "/**\n * Helpers\n *\n * @var array\n */\n";

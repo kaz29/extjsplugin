@@ -36,9 +36,7 @@
 
  	// ExtJSの基本ファイルをコピー
 
-	$ cp *.js APP/webroot/resources/js/
-	$ cp -r resources/css APP/webroot/resources/
-	$ cp -r resources/themes APP/webroot/resources/
+	$ cp resources APP/webroot/
 
  	// ステータスバー機能関連ファイルをコピー
 	$ cp -r examples/ux/statusbar APP/webroot/resources/ux/
