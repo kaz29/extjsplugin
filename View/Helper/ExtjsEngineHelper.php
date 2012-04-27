@@ -705,28 +705,35 @@ EOT;
 		}
 			// Create Form Items
 		$items = '';
+		$this->load_model($modelname) ;
+		
+		
 		if (is_null($options['items'])) {
-  		$this->load_model($modelname) ;
   		foreach($this->_schema as $name => $prop) {
   			$result = $this->input($name);
   			if ( $result === false ) 
   				continue ;
-			
+		
   		  if (strlen($items) > 0) 
   		    $items .= ',';
   			$items .= $result ;	
   		}
-  	} else {
-  		foreach($options['items'] as $name => $prop) {
-  			$result = $this->input($name, $prop);
+		} else {
+		  foreach($options['items'] as $name => $prop) {
+		    if (!is_array($prop)) {
+  			  $result = $this->input($name);
+		    } else {
+  			  $result = $this->input($name, $prop);
+		    }
+
   			if ( $result === false ) 
   				continue ;
-			
+		
   		  if (strlen($items) > 0) 
   		    $items .= ',';
   			$items .= $result ;	
-  		}
-  	}
+		  }
+		}
 		
 		$paramOrder = '';
 		$n = 0;
@@ -809,7 +816,7 @@ EOT;
 	
 		$options = array_merge($defaults, $options) ;
 		if ( is_null($options['xtype']) ) {
-		  if (!isset($this->_schame[$fieldname])) {
+		  if (!array_key_exists($fieldname, $this->_schema)) {
   			$options['xtype'] = 'textfield';
 	    } else {
   			if (isset($this->_schema[$fieldname]['key']) && $this->_schema[$fieldname]['key'] === 'primary') {
