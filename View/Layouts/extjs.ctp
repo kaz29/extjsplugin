@@ -2,10 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<?php echo $this->Html->charset(); ?>
-	<title>
-		<?php __('Unknown Application:'); ?>
-		<?php echo $title_for_layout; ?>
-	</title>
+	<title></title>
 	<?php
 		echo $this->Html->meta('icon');
 
@@ -18,6 +15,7 @@
 		echo $this->Html->script('/resources/js/bootstrap');
 		echo $this->Html->script('/resources/js/ux/statusbar/StatusBar');
 		echo $this->Html->script('/extjs/direct/init');
+		echo $this->Html->script('/extjs/direct/load');
 		echo $scripts_for_layout;
 	?>
 </head>
@@ -33,5 +31,9 @@
 	<!--/maincontents-->
 	<?php echo $this->element('Extjs.loading'); ?>
 </div>
+<form id="history-form" class="x-hide-display">
+    <input type="hidden" id="x-history-field" />
+    <iframe id="x-history-frame"></iframe>
+</form>
 </body>
 </html>

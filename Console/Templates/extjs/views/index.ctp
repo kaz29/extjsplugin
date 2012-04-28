@@ -1,10 +1,17 @@
-<?php echo "<?php \$this->Html->script(Router::url(array('action'=>'script')), array('inline' => false)); ?>"; ?>
-
-<script>
-Ext.onReady(function() {
-  Ext.app.init('<?php echo $pluralHumanName;?>');
-
-	Ext.getCmp('basic-panel').expand();
-	Ext.app.<?php echo Inflector::tableize($modelClass); ?>.init();
-});
-</script>
+<?php 
+$out = <<<EOT
+<?php
+	config('ext_direct');
+	\$ext_direct_models = Configure::read('ext_direct_models');
+	foreach(\$ext_direct_models as \$name => \$params):
+    \$this->Html->script(Router::url(
+      array(
+        'controller'  => Inflector::tableize(\$name),
+        'action'      => 'script'
+      )
+    ), array('inline' => false));
+  endforeach;
+?>
+EOT;
+echo $out;
+?>

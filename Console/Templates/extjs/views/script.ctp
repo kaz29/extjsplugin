@@ -5,6 +5,13 @@
 Ext.app.<?php echo Inflector::tableize($modelClass); ?> = {
 	store:null,
 	grid:null,
+	load: function(){
+		var main_region = Ext.getCmp('main-region');
+		main_region.removeAll();
+
+	  Ext.app.<?php echo Inflector::tableize($modelClass); ?>.init();
+    document.title = '<?php echo $modelClass;?>';
+	},
 	init: function() {
 		<?php echo "<?php echo \$this->Js->addProvidor('{$modelClass}');?>";?>
 
@@ -49,6 +56,7 @@ Ext.app.<?php echo Inflector::tableize($modelClass); ?> = {
 
 		var main_region = Ext.getCmp('main-region');
 		main_region.add(Ext.app.<?php echo Inflector::tableize($modelClass); ?>.grid);
+		main_region.setTitle('<?php echo $modelClass;?>');
 	},
 	toolbarItems:[Ext.create('Ext.Action', {
 		text: <?php echo "'<?php echo __('New');?>'";?>,

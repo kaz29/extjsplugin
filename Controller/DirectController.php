@@ -14,12 +14,24 @@ class DirectController extends AppController
 	);
 
 	/**
-	 * undocumented function
+	 * initialize 
 	 *
 	 * @return void
 	 * @author Kaz Watanabe
 	 **/
 	public function init()
+	{
+		$this->layout = false;
+		$this->response->type('js');
+	}
+
+	/**
+	 * loader
+	 *
+	 * @return void
+	 * @author Kaz Watanabe
+	 **/
+	public function load()
 	{
 		$this->layout = false;
 		$this->response->type('js');
