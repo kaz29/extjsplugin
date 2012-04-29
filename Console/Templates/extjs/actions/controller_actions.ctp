@@ -24,6 +24,7 @@
  * @return void
  */
 	public function <?php echo $admin ?>index() {
+	  $this->render('Extjs.Direct/index');
 	}
 
 /**
