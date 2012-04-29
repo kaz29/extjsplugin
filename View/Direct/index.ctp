@@ -10,13 +10,21 @@
 	    continue ;
 	  
 	  if (isset($params['controller']) && isset($params['action'])) {
-      $this->Html->script(Router::url(
-        array(
-          'controller'  => Inflector::tableize($params['controller']),
-          'action'      => $params['action']
-        )
-      ), array('inline' => false));
-
+	    if (isset($params['noconvert']) && $params['noconvert'] === true) {
+        $this->Html->script(Router::url(
+          array(
+            'controller'  => $params['controller'],
+            'action'      => 'script'
+          )
+        ), array('inline' => false));
+	    } else {
+        $this->Html->script(Router::url(
+          array(
+            'controller'  => Inflector::tableize($params['controller']),
+            'action'      => 'script'
+          )
+        ), array('inline' => false));
+      } 
 	  } else {
       $this->Html->script(Router::url(
         array(
