@@ -75,3 +75,19 @@ Ext.direct.RemotingProvider.override({
     }
   }
 });
+
+Ext.ns('Ext.app');
+/*
+ *  Convert CakePHP list array JavaScript array format.
+ */
+Ext.app.cakeListToArray = function(data, unselect) {
+  var r = [];
+	if ( unselect != undefined ) {
+    r.push({id:0, name:unselect});
+	}
+  for (var d in data){
+    r.push({id:d, name:data[d]});
+  }
+  
+  return r;
+};
