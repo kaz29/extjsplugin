@@ -19,21 +19,18 @@ class DirectController extends AppController
 	 * @return void
 	 * @author Kaz Watanabe
 	 **/
-	public function init()
+	public function init($id=null)
 	{
 		$this->layout = false;
 		$this->response->type('js');
-	}
-
-	/**
-	 * loader
-	 *
-	 * @return void
-	 * @author Kaz Watanabe
-	 **/
-	public function load()
-	{
-		$this->layout = false;
-		$this->response->type('js');
+		if (!is_null($id)) {
+		  if (strpos($id,'.') !== false) {
+		    list($view, $ext) = explode('.', $id);
+		  } else {
+		    $view = $id;
+		  }
+		  
+		  $this->render($view);
+		}
 	}
 }

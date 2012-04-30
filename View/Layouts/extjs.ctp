@@ -14,8 +14,9 @@
 		echo $this->Html->css('/resources/js/ux/css/CheckHeader');
 		echo $this->Html->script('/resources/js/bootstrap');
 		echo $this->Html->script('/resources/js/ux/statusbar/StatusBar');
+		echo $this->Html->script('/extjs/direct/init/override');
 		echo $this->Html->script('/extjs/direct/init');
-		echo $this->Html->script('/extjs/direct/load');
+		echo $this->Html->script('/extjs/direct/init/load');
 		echo $scripts_for_layout;
 	?>
 </head>
