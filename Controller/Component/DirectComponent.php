@@ -144,11 +144,12 @@ class DirectComponent extends Component
 	      	$requests->data   = $this->params['form'];
 				} else {
 					$requests->data = array();
-					foreach($this->data as $key => $value) {
-						if ( strncmp($key, 'ext', 3 ) === 0 )
-							continue ;
-						$requests->data[$key] = $value;
-					}
+				}
+
+				foreach($this->data as $key => $value) {
+					if ( strncmp($key, 'ext', 3 ) === 0 )
+						continue ;
+					$requests->data[$key] = $value;
 				}
 			
 	      $requests->form   = true;
