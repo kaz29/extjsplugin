@@ -3,7 +3,7 @@
 	$ext_direct_models = Configure::read('ext_direct_models');
   
 	foreach($ext_direct_models as $name => $params):
-	  if ($name === '-') 
+	  if (is_numeric($name)) 
 	    continue ;
 	    
 	  if (isset($params['autoload']) && $params['autoload'] !== true)

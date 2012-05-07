@@ -4,6 +4,9 @@
 	$ext_default_controller = Configure::read('ext_default_controller');
 	$controllers = array();
 	foreach($ext_direct_models as $name => $params):
+  	if (is_numeric($name)) 
+  	  continue;
+	  
 	  if (isset($params['noconvert']) && $params['noconvert'] === true) {
       $controllers[] = strtolower($name);
 	  } else {
